@@ -295,7 +295,7 @@ model.compile(optimizer = 'adadelta',
 
 为了提高模型训练的效率，直接用之前Xception模型提取的特征向量作为模型的输入，避免每次训练时都计算一次。同样，在训练模型时，监控每个epoch的误差和精度，并设置早停机制，最后保存top_model模型以及权重。
 
-![TopModelTrainingValidation](./Writeup/TopModelTrainingValidation.jpg)
+![TopModelTrainingValidation](./Writeup/TOpModelTrainingValidation.jpg)
 
 从图中可以看出来，top_model模型在训练集上误差在0.015左右，精度为0.995左右；在验证集上误差为0.017左右，精度为0.994左右。最终，在Kaggle的得分为0.04325，可以满足基准阈值。
 
