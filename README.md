@@ -3,11 +3,11 @@
 ## 项目概览
 计算机视觉是使用计算机及其相关设备对生物视觉的一种模拟，让计算机能够感知环境，终极目标是使得计算机能够像人一样“看懂世界”。目前计算机视觉主要用在人脸识别、图像处理、ADAS/无人驾驶、安防监控、智能机器等。
 
-猫狗大战是Kaggle竞赛中的一个图像分类项目，从给定的图片集中，区分出是猫还是狗，可以说是计算机视觉中的Hello World 问题。对于人类来说，区分猫和狗是一件非常简单的事情，但是对于计算机来说，我们要怎样写一个程序，让计算机来区别猫还是狗
+猫狗大战是[Kaggle竞赛](https://www.kaggle.com/c/dogs-vs-cats-redux-kernels-edition)中的一个图像分类项目，从给定的图片集中，区分出是猫还是狗，可以说是计算机视觉中的Hello World 问题。对于人类来说，区分猫和狗是一件非常简单的事情，但是对于计算机来说，我们要怎样写一个程序，让计算机来区别猫还是狗。
 
 ## 项目任务
 
-猫狗大战项目的任务是通过深度学习方法识别一张图片是猫还是狗，并预测出是狗的概率（1=狗，0=猫）。在[Kaggle竞赛](https://www.kaggle.com/c/dogs-vs-cats-redux-kernels-edition)的测试集上，预测出每一张图片是狗的概率，并在Kaggle Public Leaderboard 排名前10%，也就是在Public Leaderboard上的Logloss要低于0.06127.
+猫狗大战项目的任务是通过深度学习方法识别一张图片是猫还是狗，并预测出是狗的概率（1=狗，0=猫）。在Kaggle竞赛的测试集上，预测出每一张图片是狗的概率，并在Kaggle Public Leaderboard 排名前10%，也就是在Public Leaderboard上的Logloss要低于0.06127.
 
 
 ## 评估指标
@@ -49,7 +49,7 @@ log ： 以e为底的对数
 
 ### 基准模型
 
-针对于图像分类的问题，采用ResNet50 模型作为基准模型。ResNet在2015年被提出来，并在ILSVRC 2015比赛中，采用152层网络，将错误率降低至3.57，获得ImageNet classification的冠军。
+针对于图像分类的问题，采用ResNet50 模型作为基准模型。[ResNet](https://arxiv.org/abs/1512.03385)在2015年被提出来，并在ILSVRC 2015比赛中，采用152层网络，将错误率降低至3.57，获得ImageNet classification的冠军。
 
 ![ResNet](./Writeup/ResidualNetwork.jpg)
 
@@ -58,11 +58,11 @@ ResNet引入了残差网络结构（Residual Network），通过残差网络，�
 
 ### 方法实施
 
-在Keras Application中提供了许多预训练模型，这些模型在ImageNet数据集上都获得了比较不错的结果，该项目采用其中的ResNet50模型为基准模型，有关的设计流程可分为：数据预处理，特征提取，模型搭建，模型训练，模型调整，模型预测。
+在[Keras Application](https://keras.io/applications/)中提供了许多预训练模型，这些模型在ImageNet数据集上都获得了比较不错的结果，该项目采用其中的ResNet50模型为基准模型，有关的设计流程可分为：数据预处理，特征提取，模型搭建，模型训练，模型调整，模型预测。
 
 #### 数据预处理
 
-从Kaggle上下载dogs_vs_cats数据集，根据选取的基本模型的不同（选择Xception、ResNet50、IncptionV3），进行对应的预处理，其中ResNet50的输入大小为224*224图片，而Xception 和InceptionV3是输入大小为299x299，而且将数据放缩至[-1,1]区间。另外，可以对数据集做一系列随机变换进行提升。并将数据集分为train、validation、test三部分，以供模型训练和预测。
+从Kaggle上下载[dogs_vs_cats数据集](https://www.kaggle.com/c/dogs-vs-cats-redux-kernels-edition/data)，根据选取的基本模型的不同（选择Xception、ResNet50、IncptionV3），进行对应的预处理，其中ResNet50的输入大小为224*224图片，而Xception 和InceptionV3是输入大小为299x299，而且将数据放缩至[-1,1]区间。另外，可以对数据集做一系列随机变换进行提升。并将数据集分为train、validation、test三部分，以供模型训练和预测。
 
 ```
 ├── data_gen
@@ -71,11 +71,13 @@ ResNet引入了残差网络结构（Residual Network），通过残差网络，�
     |   |   └── cat.xxx.jpg 
     |   └── dogs
     |       └── dog.xxx.jpg
-    └── validation
-        ├── cats
-        |   └── cat.xxx.jpg 
-        └── dogs
-            └── dog.xxx.jpg
+    ├── validation
+    |   ├── cats
+    |   |   └── cat.xxx.jpg 
+    |   └── dogs
+    |       └── dog.xxx.jpg
+    └── test
+        └── xxx.jpg
 ```
 
 训练数据预处理：
@@ -237,7 +239,7 @@ model.fit(X_train, y_train, batch_size=128, epochs=50,validation_data=valid_data
 
 ![TrainingValidation](./Writeup/ResNetTrainingValidation.jpg)
 
-从训练过程中的误差和精度曲线看出来，训练集上的误差大概在0.02，精度大概在0.98左右，验证集上的误差大概在0.05左右，精度在0.97左右。并将训练好的模型保存为h5文件，方便做预测时导入。
+从训练过程中的误差和精度曲线看出来，训练集上的误差大概在0.02，精度大概在0.98左右，验证集上的误差大概在0.06左右，精度在0.97左右。并将训练好的模型保存为h5文件，方便做预测时导入。
 
 #### 模型预测
 
